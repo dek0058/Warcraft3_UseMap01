@@ -1,0 +1,45 @@
+library AEngine
+
+    globals
+        real GameTime = 0.0
+        constant real DeltaTime = 0.05
+
+        private AEngine engine
+
+        private IntegerList characterList
+        private ACharacter tempCharacter
+    endglobals
+
+
+    struct AEngine
+        
+        private static method onInit takes nothing returns nothing
+            set engine = Create()
+            set characterList = IntegerList.create()
+
+            call engine.Start(DeltaTime, true, function thistype.Update)
+        endmethod
+        
+
+        private static method Update takes nothing returns nothing
+
+            if not characterList.empty() then
+                set tempCharacter = characterList.front()
+                call characterList.shift()
+                if tempCharacter.Value.IsExist then
+                    call characterList.push(tempCharacter)
+                else
+                    call tempCharacter.Destroy()
+                endif
+            endif
+
+        endmethod
+
+
+        static method RegisterCharacter takes ACharacter character returns nothing
+            call characterList.push(character)
+        endmethod
+
+        //! runtextmacro Struct2TickVJ()
+    endstruct
+endlibrary

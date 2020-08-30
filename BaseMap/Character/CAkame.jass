@@ -1,0 +1,13 @@
+library CAkame
+
+    struct CAkame extends ACharacter
+
+        static method Create takes APlayer p, real x, real y, real angle returns thistype
+            local this = allocate()
+            //! runtextmacro CreateCharacter(Akame)
+            return this
+        endmethod
+
+    endstruct
+
+endlibrary

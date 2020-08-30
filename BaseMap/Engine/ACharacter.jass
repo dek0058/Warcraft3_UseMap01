@@ -1,23 +1,20 @@
 library ACharacter requires AUnit
 
-    globals
-
-    endglobals
-
-    private function Update takes nothing returns nothing
-
-    endfunction
-
-    private struct GameTick
-        
-    endstruct
-
-
     struct ACharacter
-        private AUnit mUnit
+        public AUnit mUnit
 
         method operator Value takes nothing returns AUnit
             return mUnit
         endmethod
+
+        method Destroy takes nothing returns nothing
+            call mUnit.Remove()
+            call deallocate()
+            set this = 0
+        endmethod
     endstruct
+
+    //! textmacro CreateCharacter takes ID
+    set mUnit = AUnit.Create($ID$, p, x, y, angle)
+    //! endtextmacro
 endlibrary

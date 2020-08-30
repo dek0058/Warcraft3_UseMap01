@@ -71,14 +71,18 @@ library AUnit requires UnitIndexer
         
         
         method Remove takes nothing returns nothing
-        if IsUnitType(mUnit, UNIT_TYPE_HERO) then
-            call ShowUnit(mUnit, false)
-            call KillUnit(mUnit)
-            call RemoveUnit(mUnit)
-        else
-            call ShowUnit(mUnit, false)
-            call KillUnit(mUnit)
-        endif 
+            if not bExist then
+                return
+            endif
+
+            if IsUnitType(mUnit, UNIT_TYPE_HERO) then
+                call ShowUnit(mUnit, false)
+                call KillUnit(mUnit)
+                call RemoveUnit(mUnit)
+            else
+                call ShowUnit(mUnit, false)
+                call KillUnit(mUnit)
+            endif 
         endmethod
         
         
