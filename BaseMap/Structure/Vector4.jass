@@ -1,0 +1,144 @@
+scope Vector4
+    globals
+        private Vector4 zero
+        private Vector4 r
+        private Vector4 g
+        private Vector4 b
+        private Vector4 a
+    endglobals
+
+    struct Vector4
+        real X
+        real Y
+        real Z
+        real W
+    
+        private Vector4 temp
+        
+        
+        private static method onInit takes nothing returns nothing
+            set zero = Vector4.Create(0.0, 0.0, 0.0, 0.0)
+            call zero.temp.Set(1.0, 1.0, 1.0, 1.0)
+            set r = Vector4.Create(1.0, 0.0, 0.0, 0.0)
+            set g = Vector4.Create(0.0, 1.0, 0.0, 0.0)
+            set b = Vector4.Create(0.0, 0.0, 1.0, 0.0)
+            set a = Vector4.Create(0.0, 0.0, 0.0, 1.0)
+        endmethod
+        
+        
+        static method operator Zero takes nothing returns thistype
+            return zero
+        endmethod
+        static method operator One takes nothing returns thistype
+            return zero.temp
+        endmethod
+        static method operator R takes nothing returns thistype
+            return r
+        endmethod
+        static method operator G takes nothing returns thistype
+            return g
+        endmethod
+        static method operator B takes nothing returns thistype
+            return b
+        endmethod
+        static method operator A takes nothing returns thistype
+            return a
+        endmethod
+        
+        
+        static method Create takes real x, real y, real z, real w returns thistype
+            local thistype this = allocate()
+            set X = x
+            set Y = y
+            set Z = z
+            set W = w
+            set temp = allocate()
+            return this
+        endmethod
+        
+        
+        method Add takes Vector4 vec4 returns thistype
+            set X = X + vec4.X
+            set Y = Y + vec4.Y
+            set Z = Z + vec4.Z
+            set W = W + vec4.W
+            return this
+        endmethod
+        
+        method Subtrct takes Vector4 vec4 returns thistype
+            set X = X - vec4.X
+            set Y = Y - vec4.Y
+            set Z = Z - vec4.Z
+            set W = W - vec4.W
+            return this
+        endmethod
+        
+        method Multiple takes real value returns thistype
+            set X = X * value
+            set Y = Y * value
+            set Z = Z * value
+            set W = W * value
+            return this
+        endmethod
+        
+        method Divide takes real value returns thistype
+            set X = X / value
+            set Y = Y / value
+            set Z = Z / value
+            set W = W / value
+            return this
+        endmethod
+        
+        method Copy takes Vector4 vec4 returns thistype
+            set X = vec4.X
+            set Y = vec4.Y
+            set Z = vec4.Z
+            set W = vec4.W
+            return this
+        endmethod
+        
+        method Set takes real x, real y, real z, real w returns thistype
+            set X = x
+            set Y = y
+            set Z = z
+            set W = w
+            return this
+        endmethod
+        
+        method Dot takes Vector4 vec4 returns real
+            return (X * vec4.X) + (Y * vec4.Y) + (Z * vec4.Z) + (W * vec4.W)
+        endmethod
+        
+        
+        method operator MagnitudeSquared takes nothing returns real
+            return (X * X) + (Y * Y) + (Z * Z) + (W * W)
+        endmethod
+        
+        
+        method operator Magnitude takes nothing returns real
+            return SquareRoot((X * X) + (Y * Y) + (Z * Z) + (W * W))
+        endmethod
+        
+        
+        method operator Normalize takes nothing returns Vector4
+            local real magnitude = (X * X) + (Y * Y) + (Z * Z) + (W * W)
+            if magnitude == 1.0 then
+                return this
+            elseif magnitude == 0.0 then
+                return zero
+            endif
+            set magnitude = 1 / SquareRoot(magnitude)
+            call temp.Copy(this)
+            return temp.Multiple(magnitude)
+        endmethod
+
+        
+        method Destroy takes nothing returns nothing
+            call temp.deallocate()
+            set temp = 0
+            call deallocate()
+            set this = 0
+        endmethod
+        
+    endstruct
+endscope

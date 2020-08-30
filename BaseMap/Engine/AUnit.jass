@@ -1,0 +1,192 @@
+library AUnit requires UnitIndexer
+
+
+    struct AUnit extends array
+        
+        private unit mUnit
+        private APlayer mPlayer
+        private Color32 mColor
+        
+        private real rTimeScale
+        private real rScale
+        private boolean bPathing
+        private boolean bExist
+        
+        
+        private trigger trigRemove
+        private triggeraction actRemove
+        
+        
+        private static method InvokeRemove takes nothing returns nothing
+            local thistype this = GetTriggerIndex()
+            call TriggerRemoveAction(trigRemove, actRemove)
+            call DestroyTrigger(trigRemove)
+            call this.Destroy()
+        endmethod
+        
+        
+        static method Create takes integer id, APlayer p, real x, real y, real angle returns thistype
+            local unit u = CreateUnit(p.Value, id, x, y, angle)
+            local thistype this = IndexUnit(u)
+            
+            set mPlayer = p
+            set mUnit = u
+            set mColor = Color32.Create(255, 255, 255, 255)
+            set rTimeScale = 1.0
+            set rScale = 1.0
+            set bPathing = true
+            set bExist = true
+            
+            set trigRemove = GetUnitRemoveTrigger( mUnit )
+            set actRemove = TriggerAddAction(trigRemove, function thistype.InvokeRemove )
+            
+            set u = null
+            return this
+        endmethod
+        
+        
+        static method Register takes unit u returns thistype
+            local thistype this = IndexUnit(u)
+            
+            if this != 0 and not bExist then
+                set mPlayer = APlayer[GetPlayerId(GetOwningPlayer(u))]
+                set mUnit = u
+                set mColor = Color32.Create(255, 255, 255, 255)
+                set rTimeScale = 1.0
+                set rScale = 1.0
+                set bPathing = true
+                set bExist = true
+            
+                set trigRemove = GetUnitRemoveTrigger( mUnit )
+                set actRemove = TriggerAddAction(trigRemove, function thistype.InvokeRemove )
+            endif
+            
+            return this
+        endmethod
+        
+        
+        static method [] takes unit u returns thistype
+            return Register(u)
+        endmethod
+        
+        
+        method Remove takes nothing returns nothing
+        if IsUnitType(mUnit, UNIT_TYPE_HERO) then
+            call ShowUnit(mUnit, false)
+            call KillUnit(mUnit)
+            call RemoveUnit(mUnit)
+        else
+            call ShowUnit(mUnit, false)
+            call KillUnit(mUnit)
+        endif 
+        endmethod
+        
+        
+        method SetColor takes integer r, integer g, integer b, integer a returns nothing
+            set mColor.R = r
+            set mColor.G = g
+            set mColor.B = b
+            set mColor.A = a
+            call SetUnitVertexColor(mUnit, r, g, b, a)
+        endmethod        
+        
+        
+        method Give takes APlayer p, boolean changeColor returns nothing
+            set mPlayer = p
+            call SetUnitOwner(mUnit, mPlayer.Value, changeColor)
+        endmethod
+        
+        
+        method GetColor takes nothing returns Color32
+            return mColor
+        endmethod
+        
+        
+        method operator Pathing= takes boolean value returns nothing
+            set bPathing = value
+            call SetUnitPathing(mUnit, value)
+        endmethod
+        
+        method operator TimeScale= takes real value returns nothing
+            set rTimeScale = value
+            call SetUnitTimeScale(mUnit, value)
+        endmethod
+        
+        method operator Scale= takes real value returns nothing
+            set rScale = value
+            call SetUnitScale(mUnit, value, value, value)
+        endmethod
+        
+        
+        method operator R= takes integer value returns nothing
+            set mColor.R = value
+            call SetUnitVertexColor(mUnit, mColor.R, mColor.G, mColor.B, mColor.A)
+        endmethod
+        method operator G= takes integer value returns nothing
+            set mColor.G = value
+            call SetUnitVertexColor(mUnit, mColor.R, mColor.G, mColor.B, mColor.A)
+        endmethod
+        method operator B= takes integer value returns nothing
+            set mColor.B = value
+            call SetUnitVertexColor(mUnit, mColor.R, mColor.G, mColor.B, mColor.A)
+        endmethod
+        method operator A= takes integer value returns nothing
+            set mColor.A = value
+            call SetUnitVertexColor(mUnit, mColor.R, mColor.G, mColor.B, mColor.A)
+        endmethod
+        
+        
+        method operator Value takes nothing returns unit
+            return mUnit
+        endmethod
+        
+        method operator IsExist takes nothing returns boolean
+            return bExist
+        endmethod
+
+         method operator IsDead takes nothing returns boolean
+            return IsUnitType(mUnit, UNIT_TYPE_DEAD) or GetUnitTypeId(mUnit) == 0
+        endmethod
+        method operator IsAllive takes nothing returns boolean
+            return not IsUnitType(mUnit, UNIT_TYPE_DEAD) or GetUnitTypeId(mUnit) != 0
+        endmethod
+        
+        method operator Pathing takes nothing returns boolean
+            return bPathing
+        endmethod
+        
+        method operator TimeScale takes nothing returns real
+            return rTimeScale
+        endmethod
+        
+        method operator Scale takes nothing returns real
+            return rScale
+        endmethod
+        
+        method operator Owner takes nothing returns APlayer
+            return mPlayer
+        endmethod
+        
+        
+        method operator R takes nothing returns integer
+            return mColor.R
+        endmethod
+        method operator G takes nothing returns integer
+            return mColor.G
+        endmethod
+        method operator B takes nothing returns integer
+            return mColor.B
+        endmethod
+        method operator A takes nothing returns integer
+            return mColor.A
+        endmethod
+
+
+        method Destroy takes nothing returns nothing
+            set bExist = false
+            set mUnit = null
+            set trigRemove = null
+            set actRemove = null
+        endmethod
+    endstruct
+endlibrary

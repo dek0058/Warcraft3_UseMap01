@@ -1,0 +1,7 @@
+library zGameEngine
+    
+    
+    private struct GameTick
+    
+    endstruct
+endlibrary

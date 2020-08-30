@@ -1,0 +1,23 @@
+library APlayerProperty requires APlayer
+    struct APlayerProperty
+        
+        public static method SetVision takes player source, player target, boolean value returns nothing
+            call SetPlayerAlliance(source, target, ALLIANCE_SHARED_VISION, value)
+        endmethod
+        
+        public static method SetAlliance takes player source, player target, boolean value returns nothing
+            call SetPlayerAlliance(source, target, ALLIANCE_PASSIVE, value)
+            call SetPlayerAlliance(source, target, ALLIANCE_HELP_REQUEST, value)
+            call SetPlayerAlliance(source, target, ALLIANCE_HELP_RESPONSE, value)
+            call SetPlayerAlliance(source, target, ALLIANCE_SHARED_XP, value)
+            call SetPlayerAlliance(source, target, ALLIANCE_SHARED_SPELLS, value)
+        endmethod
+        
+        
+        public static method SetShared takes player source, player target, boolean value returns nothing
+            call SetPlayerAlliance(source, target, ALLIANCE_SHARED_CONTROL, value)
+            call SetPlayerAlliance(source, target, ALLIANCE_SHARED_ADVANCED_CONTROL, value)
+        endmethod
+        
+    endstruct
+endlibrary

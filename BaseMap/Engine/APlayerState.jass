@@ -1,0 +1,7 @@
+library APlayerState
+    struct APlayerState
+
+        APlayer mPlayer
+
+    endstruct
+endlibrary

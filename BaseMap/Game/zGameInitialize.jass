@@ -1,0 +1,126 @@
+library zGameInitialize
+
+    globals
+        private StringList funcList
+        private boolean bLoad = false
+        private integer resCount = 0
+    endglobals
+    
+
+    private struct GameTick
+        private static method onInit takes nothing returns nothing
+            local thistype this = Create()
+            set funcList = StringList.create()
+
+            call funcList.push("OnCommandRegister")
+            call funcList.push("OnCameraFixer")
+            call funcList.push("OnAssign")
+            call funcList.push("OnInitialize")
+            
+            call Start( DeltaTime, true, function thistype.Load )
+        endmethod
+        
+        
+        private static method Load takes nothing returns nothing
+            local thistype this = GetExpired()
+            
+            if not bLoad and not funcList.empty() then
+                call ExecuteFunc(funcList.back())
+            
+            elseif funcList.empty() then
+                call Pause()
+            endif
+        endmethod
+        
+        //! runtextmacro Struct2TickVJ()
+    endstruct
+    
+    
+    //! textmacro LoadStart
+        if bLoad then
+            return
+        endif
+        set resCount = resCount + 1
+        set bLoad = true
+    //! endtextmacro
+    //! textmacro LoadEnd
+        call funcList.pop()
+        set bLoad = false
+    //! endtextmacro
+    
+    
+    function OnInitialize takes nothing returns nothing
+        //! runtextmacro LoadStart()
+        
+        call ResetTerrainFog()
+        call SetTerrainFogEx( 0, 1000000000.00, 1000000000.00, 0, 1, 1, 1 )
+        call FogEnable(true)
+        call FogMaskEnable(true)
+        
+        debug call BJDebugMsg("OnInitialize")
+        //! runtextmacro LoadEnd()
+    endfunction
+    
+    
+    function OnAssign takes nothing returns nothing
+        local integer i = 0
+        // if 닉네임이 cannot일 경우 조건문
+        
+        //! runtextmacro LoadStart()
+        
+        loop
+            call APlayerProperty.SetVision(Player(i), Player(0), true)
+            call APlayerProperty.SetAlliance(Player(i), Player(0), true)
+            set i = i + 1
+            exitwhen i == bj_MAX_PLAYERS
+        endloop
+        
+        loop
+            call APlayerProperty.SetVision(Player(i), Player(0), true)
+            call APlayerProperty.SetShared(Player(i), Player(0), true)
+            set i = i + 1
+            exitwhen i == bj_MAX_PLAYER_SLOTS
+        endloop
+        
+        debug call BJDebugMsg("OnAssign")
+        //! runtextmacro LoadEnd()
+    endfunction
+    
+    
+    function OnCameraFixer takes nothing returns nothing
+        local integer i = 0
+        
+        //! runtextmacro LoadStart()
+        
+        loop
+            if APlayer[i].IsUser( ) and APlayer[i].IsPlaying( ) then
+                call ACamera[i].Start()
+            endif
+            set i = i + 1
+            exitwhen i == bj_MAX_PLAYERS
+        endloop
+        
+        debug call BJDebugMsg("OnCameraFixer")
+        //! runtextmacro LoadEnd()
+    endfunction
+    
+    
+    function OnCommandRegister takes nothing returns nothing
+        local integer i = 0
+        
+        //! runtextmacro LoadStart()
+        
+        loop
+            if APlayer[i].IsUser( ) and APlayer[i].IsPlaying( ) then
+                call CVisionControl.Register(ACommand[i])
+                call CMapHack.Register(ACommand[i])
+            endif
+            set i = i + 1
+            exitwhen i == bj_MAX_PLAYERS
+        endloop
+        
+        debug call BJDebugMsg("OnCommandRegister")
+        //! runtextmacro LoadEnd()
+    endfunction
+
+endlibrary

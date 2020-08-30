@@ -1,0 +1,43 @@
+scope CMapHack
+    
+    globals
+        private constant string Message = "-맵핵"
+        private constant fogmodifier array fogModifiers
+    endglobals
+    
+    
+    private function Cmd takes nothing returns nothing
+        local string msg = ACommand.GetMessage(0)
+        local string switch = ACommand.GetMessage(1)
+        local integer i = APlayer.GetTrigger()
+        
+        if msg != Message or ACommand.Count != 2 then
+            return
+        endif
+        
+        
+        if switch == "On" or switch == "ON" or switch == "on" then
+            if fogModifiers[i] == null then
+                set fogModifiers[i] = CreateFogModifierRect(APlayer[i].Value, FOG_OF_WAR_VISIBLE, bj_mapInitialPlayableArea, true, false)
+                call FogModifierStart(fogModifiers[i])
+            endif
+            
+        elseif switch == "Off" or switch == "OFF" or switch == "off" then
+            if fogModifiers[i] != null then
+                call FogModifierStop(fogModifiers[i])
+                call DestroyFogModifier(fogModifiers[i])
+                set fogModifiers[i] = null
+            endif
+        endif
+    endfunction
+    
+    
+    struct CMapHack
+        static constant integer ID = 2
+        
+        static method Register takes ACommand cmd returns nothing
+            local ACommandAction cmdAct = ACommandAction.Create(ID)
+            call cmd.Add(cmdAct, function Cmd)
+        endmethod
+    endstruct
+endscope

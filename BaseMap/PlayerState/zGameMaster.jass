@@ -1,0 +1,24 @@
+library zGameMaster
+
+
+    struct zGameMaster extends APlayerState
+
+        
+
+        static method Create takes APlayer p returns thistype
+            local thistype this = allocate()
+            set mPlayer = p
+            
+
+            
+            
+            return this
+        endmethod
+
+
+        method Destroy takes nothing returns nothing
+            call deallocate()
+            set this = 0
+        endmethod
+    endstruct
+endlibrary

@@ -1,0 +1,49 @@
+library ARegion
+    struct ARegion
+        
+        private FogModifierList fogModifierList
+        private APlayer mPlayer
+        
+        static method Create takes APlayer p returns thistype
+            local thistype this = allocate()
+            set mPlayer = p
+            return this
+        endmethod
+        
+        
+        method AddRect takes fogstate state, rect r returns nothing
+            local fogmodifier fm = CreateFogModifierRect(mPlayer.Value, state, r, true, false)
+            call FogModifierStart(fm)
+            call fogModifierList.push(fm)
+        endmethod
+        
+        method AddLocation takes fogstate state, real x, real y, real radius returns nothing
+            local location loc = Location(x, y)
+            local fogmodifier fm = CreateFogModifierRadiusLoc(mPlayer.Value, state, loc, radius, true, false)
+            call FogModifierStart(fm)
+            call RemoveLocation(loc)
+            call fogModifierList.push(fm)
+        endmethod
+        
+        method Clear takes nothing returns nothing
+            local FogModifierListItem iter = fogModifierList.first
+            local FogModifierListItem temp
+
+            loop
+                exitwhen iter == 0
+                set temp = iter.next
+                call FogModifierStop(iter.data)
+                call DestroyFogModifier(iter.data)
+                call fogModifierList.erase(iter)
+                set iter = temp
+            endloop
+        endmethod
+        
+        
+        method Destroy takes nothing returns nothing
+            call Clear()
+            call deallocate()
+            set this = 0
+        endmethod
+    endstruct
+endlibrary

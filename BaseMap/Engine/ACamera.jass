@@ -1,0 +1,74 @@
+library ACamera requires APlayer
+    
+    
+    private struct CameraTick
+        ACamera camera
+        //! runtextmacro Struct2TickVJ()
+    endstruct
+    
+    
+    private function Update takes nothing returns nothing
+        local CameraTick tick = CameraTick.GetExpired()
+        local ACamera camera = tick.camera
+        local real dist = GetCameraField(CAMERA_FIELD_TARGET_DISTANCE)
+        local real result = camera.distance * 18.666
+        
+        if dist != result then
+            call camera.Field(CAMERA_FIELD_TARGET_DISTANCE, result, 0.0)
+        endif
+    endfunction
+    
+    
+    struct ACamera extends array
+        private CameraTick tick
+        private APlayer mPlayer
+
+        real distance
+
+        private static method onInit takes nothing returns nothing
+            local integer i = 0
+            local thistype this
+            loop
+                if APlayer[i].IsUser( ) and APlayer[i].IsPlaying( ) then
+                    set this = i
+                    set mPlayer = i
+                    set tick = CameraTick.Create()
+                    set tick.camera = this
+                    set distance = 90
+                endif
+                set i = i + 1
+                exitwhen i == bj_MAX_PLAYERS
+            endloop
+        endmethod
+        
+        
+        static method operator [] takes integer i returns thistype
+            if i < 0 or i >= bj_MAX_PLAYER_SLOTS then
+                return 0
+            endif
+            return i
+        endmethod
+        
+        
+        method Start takes nothing returns nothing
+            call tick.Start( 0.05, true, function Update )
+        endmethod
+        method Stop takes nothing returns nothing
+            call tick.Pause()
+        endmethod
+        
+        
+        method Position takes real x, real y returns nothing
+            if mPlayer.IsLocal() then
+                call SetCameraPosition(x, y)
+            endif
+        endmethod
+        
+        
+        method Field takes camerafield cf, real value, real dur returns nothing
+            if mPlayer.IsLocal() then
+                call SetCameraField(cf, value, dur)
+            endif
+        endmethod
+    endstruct
+endlibrary

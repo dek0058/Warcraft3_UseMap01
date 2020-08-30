@@ -1,0 +1,21 @@
+library zGameVariable initializer init
+    globals
+        
+        // Engine
+        real GameTime = 0.0
+        constant real DeltaTime = 0.05
+        
+        
+        // Edit Ability
+        constant integer EditAbility01 = 'C000'
+        
+
+        // Unit
+        constant integer GameMaster = 'u000'
+
+    endglobals
+    
+    private function init takes nothing returns nothing
+        
+    endfunction
+endlibrary

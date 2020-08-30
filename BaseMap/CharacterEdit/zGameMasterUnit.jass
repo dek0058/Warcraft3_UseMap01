@@ -1,0 +1,5 @@
+library zGameMasterUnit
+    struct zGameMasterUnit
+        
+    endstruct
+endlibrary

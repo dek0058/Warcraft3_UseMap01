@@ -1,0 +1,139 @@
+library ACommand requires APlayer
+    
+    globals
+        private integer chatIndex
+        private string array chatMessage
+    endglobals
+    
+    private function Calc takes nothing returns boolean
+        local string msg = GetEventPlayerChatString()
+        local integer spIndex = 0
+        local integer msgIndex = 0
+        local integer length = StringLength(msg)
+        local boolean bRead = false
+        
+        set chatIndex = 0
+        loop
+            if not bRead then
+                if SubString(msg, msgIndex, msgIndex + 1) != " " then
+                    set spIndex = msgIndex
+                    set bRead = true
+                endif
+            else
+                if SubString(msg, msgIndex, msgIndex + 1) == " " then
+                    set chatMessage[chatIndex] = SubString(msg, spIndex, msgIndex)
+                    set chatIndex = chatIndex + 1
+                    set bRead = false
+                endif
+            endif
+            set msgIndex = msgIndex + 1
+            exitwhen msgIndex >= length
+        endloop
+        if bRead then
+            set chatMessage[chatIndex] = SubString(msg, spIndex, msgIndex)
+            set chatIndex = chatIndex + 1
+        endif
+        return true
+    endfunction
+    
+    
+    struct ACommandAction extends array
+        readonly integer id
+        triggeraction action
+        
+        implement Alloc
+        
+        static method Create takes integer i returns thistype
+            local thistype this = allocate()
+            set id = i
+            return this
+        endmethod
+        
+        
+        method Destroy takes nothing returns nothing
+            set id = 0
+            set action = null
+            call deallocate()
+        endmethod
+    endstruct
+    
+    
+    struct ACommand extends array
+        private trigger trig
+        private triggercondition cd
+        
+        private IntegerList cmdActionList
+        
+        
+        private static method onInit takes nothing returns nothing
+            local integer i = 0
+            local thistype this
+            loop
+                if APlayer[i].IsUser( ) and APlayer[i].IsPlaying( ) then
+                    set this = i
+                    set cmdActionList = IntegerList.create()
+                    set trig = CreateTrigger()
+                    set cd = TriggerAddCondition(trig, Filter(function Calc))
+                    call TriggerRegisterPlayerChatEvent(trig, APlayer[i].Value, "", false)
+                endif
+                set i = i + 1
+                exitwhen i == bj_MAX_PLAYERS
+            endloop
+        endmethod
+        
+        
+        static method GetMessage takes integer index returns string
+            if index >= chatIndex then
+                return " "
+            endif
+            return chatMessage[index]
+        endmethod
+        
+        static method operator Count takes nothing returns integer
+            return chatIndex
+        endmethod
+        
+        
+        method Add takes ACommandAction cmdAction, code callback returns nothing
+            set cmdAction.action = TriggerAddAction(trig, callback)
+            call cmdActionList.push(cmdAction)
+        endmethod
+        
+        
+        
+        method Remove takes integer id returns nothing
+            local IntegerListItem iter = cmdActionList.first
+            local IntegerListItem temp
+            local ACommandAction cmdAct
+            local boolean bLoop = true
+            loop
+                exitwhen bLoop or iter == 0
+                set temp = iter.next
+                set cmdAct = iter.data
+                if cmdAct.id == id then
+                    call cmdActionList.erase(iter)
+                    call TriggerRemoveAction(trig, cmdAct.action)
+                    call cmdAct.Destroy()
+                    set bLoop = false
+                endif
+                set iter = temp
+            endloop
+        endmethod
+        
+        
+        method Clear takes nothing returns nothing
+            local IntegerListItem iter = cmdActionList.first
+            local IntegerListItem temp
+            local ACommandAction cmdAct
+            loop
+                exitwhen iter == 0
+                set temp = iter.next
+                set cmdAct = iter.data
+                call cmdActionList.erase(iter)
+                call TriggerRemoveAction(trig, cmdAct.action)
+                call cmdAct.Destroy()
+                set iter = temp
+            endloop
+        endmethod
+    endstruct
+endlibrary

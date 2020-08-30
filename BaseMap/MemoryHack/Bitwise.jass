@@ -1,0 +1,40 @@
+/* Provides the binary AND, OR and XOR operations, using natives
+   and memory reading. This should be faster than all alternatives
+   that use math operations and/or lookup tables */
+
+library Bitwise requires Memory, Version
+
+globals
+    constant gametype GAME_TYPE_ALL = ConvertGameType(0xFFFFFFFF)
+endglobals
+
+function GetGameTypeSupported takes nothing returns integer
+    return GameTypeSupported[0]
+endfunction
+
+function BitwiseNot takes integer i returns integer
+    return 0xFFFFFFFF - i
+endfunction
+
+function BitwiseOr takes integer a, integer b returns integer
+    call SetGameTypeSupported(GAME_TYPE_ALL, false)
+    call SetGameTypeSupported(ConvertGameType(a), true)
+    call SetGameTypeSupported(ConvertGameType(b), true)
+    return GetGameTypeSupported()
+endfunction
+
+function BitwiseAnd takes integer a, integer b returns integer
+    call SetGameTypeSupported(GAME_TYPE_ALL, false)
+    call SetGameTypeSupported(ConvertGameType(a), true)
+    call SetGameTypeSupported(ConvertGameType(BitwiseNot(b)), false)
+    return GetGameTypeSupported()
+endfunction
+
+function BitwiseXor takes integer a, integer b returns integer
+    call SetGameTypeSupported(GAME_TYPE_ALL, false)
+    call SetGameTypeSupported(ConvertGameType(a), true)
+    call SetGameTypeSupported(ConvertGameType(b), true)
+    return GetGameTypeSupported()*2 - a - b
+endfunction
+
+endlibrary

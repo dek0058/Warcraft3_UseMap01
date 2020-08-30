@@ -1,0 +1,94 @@
+scope HexConvert
+    globals
+        private string array mapChar
+        private integer array mapInt
+    endglobals
+    
+    
+    
+    private module HexInit
+        private static method onInit takes nothing returns nothing
+            set mapInt[918] = 0
+            set mapInt[1593] = 1
+            set mapInt[719] = 2
+            set mapInt[617] = 3
+            set mapInt[703] = 4
+            set mapInt[573] = 5
+            set mapInt[707] = 6
+            set mapInt[1208] = 7
+            set mapInt[106] = 8
+            set mapInt[302] = 9
+            set mapInt[257] = 10
+            set mapInt[213] = 11
+            set mapInt[271] = 12
+            set mapInt[219] = 13
+            set mapInt[1330] = 14
+            set mapInt[1425] = 15
+            set mapChar[0] = "0"
+            set mapChar[1] = "1"
+            set mapChar[2] = "2"
+            set mapChar[3] = "3"
+            set mapChar[4] = "4"
+            set mapChar[5] = "5"
+            set mapChar[6] = "6"
+            set mapChar[7] = "7"
+            set mapChar[8] = "8"
+            set mapChar[9] = "9"
+            set mapChar[10] = "A"
+            set mapChar[11] = "B"
+            set mapChar[12] = "C"
+            set mapChar[13] = "D"
+            set mapChar[14] = "E"
+            set mapChar[15] = "F"
+        endmethod
+    endmodule
+    struct HexConvert extends array
+        implement HexInit
+        
+        static method I2S takes integer hex, boolean lower returns string
+            local string s = ""
+            local integer div
+            
+            loop
+                set div = hex / 16
+                set s = mapChar[hex - div * 16] + s
+                set hex = div
+                exitwhen hex == 0
+            endloop
+            
+            if lower then
+                set s = StringCase( s, false )
+            endif
+            
+            return s
+        endmethod
+        
+        
+        static method S2I takes string s returns integer
+            local integer length = StringLength(s)
+            local integer hex = 0
+            local integer i = 0
+            local integer key
+            local string char
+            
+            if SubString(s, 0, 2) == "0x" then
+                set s = SubString(s, 2, length)
+                set length = length - 2
+            endif
+            
+            loop
+                exitwhen i == length
+                set char = SubString(s, i, i + 1)
+                set key = mapInt[StringHash(char) / 0x1F0748 + 0x40D ]
+                debug if key == 0 then
+                    debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "DEBUG: Hex::HS2I Invalid string character.")
+                    debug return -1
+                debug endif
+                set hex = hex * 16 + key
+                set i = i + 1
+            endloop
+            
+            return hex
+        endmethod
+    endstruct
+endscope

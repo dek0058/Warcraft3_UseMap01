@@ -1,0 +1,145 @@
+scope Vector3
+    globals
+        private Vector3 zero
+        private Vector3 right
+        private Vector3 up
+        private Vector3 forward
+    endglobals
+
+    struct Vector3
+        real X
+        real Y
+        real Z
+        
+        private Vector3 temp
+        
+        
+        private static method onInit takes nothing returns nothing
+            set zero = Vector3.Create(0.0, 0.0, 0.0)
+            call zero.temp.Set(1.0, 1.0, 1.0)
+            set right = Vector3.Create(1.0, 0.0, 0.0)
+            call right.temp.Set(-1.0, 0.0, 0.0)
+            set up = Vector3.Create(0.0, 1.0, 0.0)
+            call up.temp.Set(0.0, -1.0, 0.0)
+            set forward = Vector3.Create(0.0, 0.0, 1.0)
+            call forward.temp.Set(0.0, 0.0, -1.0)
+        endmethod
+        
+        
+        static method operator Zero takes nothing returns thistype
+            return zero
+        endmethod
+        static method operator One takes nothing returns thistype
+            return zero.temp
+        endmethod
+        static method operator Right takes nothing returns thistype
+            return right
+        endmethod
+        static method operator Left takes nothing returns thistype
+            return right.temp
+        endmethod
+        static method operator Up takes nothing returns thistype
+            return up
+        endmethod
+        static method operator Down takes nothing returns thistype
+            return up.temp
+        endmethod
+        static method operator Forward takes nothing returns thistype
+            return forward
+        endmethod
+        static method operator Back takes nothing returns thistype
+            return forward.temp
+        endmethod
+        
+        
+        static method Create takes real x, real y, real z returns thistype
+            local thistype this = allocate()
+            set X = x
+            set Y = y
+            set Z = z
+            set temp = allocate()
+            return this
+        endmethod
+        
+        
+        method Add takes Vector3 vec3 returns thistype
+            set X = X + vec3.X
+            set Y = Y + vec3.Y
+            set Z = Z + vec3.Z
+            return this
+        endmethod
+        
+        method Subtrct takes Vector3 vec3 returns thistype
+            set X = X - vec3.X
+            set Y = Y - vec3.Y
+            set Z = Z - vec3.Z
+            return this
+        endmethod
+        
+        method Multiple takes real value returns thistype
+            set X = X * value
+            set Y = Y * value
+            set Z = Z * value
+            return this
+        endmethod
+        
+        method Divide takes real value returns thistype
+            set X = X / value
+            set Y = Y / value
+            set Z = Z / value
+            return this
+        endmethod
+        
+        method Copy takes Vector3 vec3 returns thistype
+            set X = vec3.X
+            set Y = vec3.Y
+            set Z = vec3.Z
+            return this
+        endmethod
+        
+        method Set takes real x, real y, real z returns thistype
+            set X = x
+            set Y = y
+            set Z = z
+            return this
+        endmethod
+        
+        method Dot takes Vector3 vec3 returns real
+            return (X * vec3.X) + (Y * vec3.Y) + (Z * vec3.Z)
+        endmethod
+        
+        method Cross takes Vector3 vec3 returns Vector3
+            return temp.Set((Y * vec3.Z) - (Z * vec3.Y), (Z * vec3.X) - (X * vec3.Z), (X * vec3.Y) - (Y * vec3.X))
+        endmethod
+        
+        
+        method operator MagnitudeSquared takes nothing returns real
+            return (X * X) + (Y * Y) + (Z * Z)
+        endmethod
+        
+        
+        method operator Magnitude takes nothing returns real
+            return SquareRoot((X * X) + (Y * Y) + (Z * Z))
+        endmethod
+        
+        
+        method operator Normalize takes nothing returns Vector3
+            local real magnitude = (X * X) + (Y * Y) + (Z * Z)
+            if magnitude == 1.0 then
+                return this
+            elseif magnitude == 0.0 then
+                return zero
+            endif
+            set magnitude = 1 / SquareRoot(magnitude)
+            return temp.Copy(this).Multiple(magnitude)
+        endmethod
+
+        
+        method Destroy takes nothing returns nothing
+            call temp.deallocate()
+            set temp = 0
+            call deallocate()
+            set this = 0
+        endmethod
+    endstruct
+endscope

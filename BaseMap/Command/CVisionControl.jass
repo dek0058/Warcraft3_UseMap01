@@ -1,0 +1,38 @@
+scope CVisionControl
+    
+    globals
+        private constant string Message = "-시야"
+        private constant real MinDistance = 30
+        private constant real MaxDistance = 210
+    endglobals
+    
+    
+    private function Cmd takes nothing returns nothing
+        local string msg = ACommand.GetMessage(0)
+        local real dist = I2R(S2I(ACommand.GetMessage(1)))
+        local real value
+
+        if msg != Message or ACommand.Count != 2 then
+            return
+        endif
+        
+        if dist < MinDistance then
+            set dist = MinDistance
+            
+        elseif dist > MaxDistance then
+            set dist = MaxDistance
+        endif
+        
+        set ACamera[APlayer.GetTrigger()].distance = dist
+    endfunction
+    
+    
+    struct CVisionControl
+        static constant integer ID = 1
+    
+        static method Register takes ACommand cmd returns nothing
+            local ACommandAction cmdAct = ACommandAction.Create(ID)
+            call cmd.Add(cmdAct, function Cmd)
+        endmethod
+    endstruct
+endscope

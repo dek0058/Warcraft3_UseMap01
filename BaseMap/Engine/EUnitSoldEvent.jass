@@ -1,0 +1,15 @@
+library EUnitSoldEvent
+
+    globals
+        private trigger trig
+    endglobals
+
+    struct EUnitSoldEvent extends array
+        
+        
+        
+        static method Register takes nothing returns nothing
+            
+        endmethod
+    endstruct
+endlibrary

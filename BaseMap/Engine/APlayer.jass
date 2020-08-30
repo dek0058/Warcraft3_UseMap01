@@ -1,0 +1,111 @@
+library APlayer
+
+    struct APlayer extends array
+        private player mPlayer
+
+        private static method onInit takes nothing returns nothing
+            local integer i = 0
+            local thistype this
+            loop
+                set this = i
+                set mPlayer = Player(i)
+                set i = i + 1
+                exitwhen i == bj_MAX_PLAYER_SLOTS
+            endloop
+        endmethod
+        
+        
+        static method operator [] takes integer i returns thistype
+            if i < 0 or i >= bj_MAX_PLAYER_SLOTS then
+                return 0
+            endif
+            return i
+        endmethod
+        method operator Value takes nothing returns player
+            return mPlayer
+        endmethod
+        method operator ID takes nothing returns integer
+            return this
+        endmethod
+        static method Count takes boolean bComputer returns integer
+            local integer i = 0
+            local integer result = 0
+            loop
+                if ((bComputer and APlayer[i].IsComputer( )) or APlayer[i].IsUser( )) and APlayer[i].IsPlaying( ) then
+                    set result = result + 1
+                endif
+                set i = i + 1
+                exitwhen i == bj_MAX_PLAYERS
+            endloop
+            return result
+        endmethod
+        static method GetTrigger takes nothing returns thistype
+            return GetPlayerId(GetTriggerPlayer())
+        endmethod
+        
+        
+        method operator Gold= takes integer value returns nothing
+            call SetPlayerState( mPlayer, PLAYER_STATE_RESOURCE_GOLD, value)
+        endmethod
+        method operator Lumber= takes integer value returns nothing
+            call SetPlayerState( mPlayer, PLAYER_STATE_RESOURCE_LUMBER, value)
+        endmethod
+        method operator Name= takes string name returns nothing
+            call SetPlayerName(mPlayer, name)
+        endmethod
+        method operator Color= takes playercolor color returns nothing
+            call SetPlayerColor(mPlayer, color)
+        endmethod
+        method operator Handicap= takes real percent returns nothing
+            call SetPlayerHandicap(mPlayer, percent)
+        endmethod
+        method operator HandicapXP= takes real percent returns nothing
+            call SetPlayerHandicapXP(mPlayer, percent)
+        endmethod
+        method operator Team= takes integer index returns nothing
+            call SetPlayerTeam(mPlayer, index)
+        endmethod
+        
+        method operator Gold takes nothing returns integer
+            return GetPlayerState(mPlayer, PLAYER_STATE_RESOURCE_GOLD)
+        endmethod
+        method operator Lumber takes nothing returns integer
+            return GetPlayerState(mPlayer, PLAYER_STATE_RESOURCE_LUMBER)
+        endmethod
+        method operator Name takes nothing returns string
+            return GetPlayerName(mPlayer)
+        endmethod
+        method operator Color takes nothing returns playercolor
+            return GetPlayerColor(mPlayer)
+        endmethod
+        method operator Handicap takes nothing returns real
+            return GetPlayerHandicap(mPlayer)
+        endmethod
+        method operator HandicapXP takes nothing returns real
+            return GetPlayerHandicapXP(mPlayer)
+        endmethod
+        method operator Team takes nothing returns integer
+            return GetPlayerTeam(mPlayer)
+        endmethod
+        
+        
+        method IsLocal takes nothing returns boolean
+            return GetLocalPlayer() == mPlayer
+        endmethod
+        method IsUser takes nothing returns boolean
+            return GetPlayerController(mPlayer) == MAP_CONTROL_USER
+        endmethod
+        method IsComputer takes nothing returns boolean
+            return GetPlayerController(mPlayer) == MAP_CONTROL_COMPUTER
+        endmethod
+        method IsPlaying takes nothing returns boolean
+            return GetPlayerSlotState(mPlayer) == PLAYER_SLOT_STATE_PLAYING
+        endmethod
+        method IsEmpty takes nothing returns boolean
+            return GetPlayerSlotState(mPlayer) == PLAYER_SLOT_STATE_EMPTY
+        endmethod
+        method IsLeft takes nothing returns boolean
+            return GetPlayerSlotState(mPlayer) == PLAYER_SLOT_STATE_LEFT
+        endmethod
+    endstruct
+endlibrary

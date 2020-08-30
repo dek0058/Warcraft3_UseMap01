@@ -1,0 +1,178 @@
+scope Color32 
+
+    private function Convert takes integer value returns string
+        local string s = HexConvert.I2S(value, false)
+        if StringLength(s) == 1 then
+            set s = "0" + s
+        endif
+        return s
+    endfunction
+
+
+    globals
+        private Color32 red
+        private Color32 blue
+        private Color32 cyan
+        private Color32 purple
+        private Color32 yellow
+        private Color32 orange
+        private Color32 green
+        private Color32 pink
+        private Color32 grey
+        private Color32 lightBlue
+        private Color32 darkGreen
+        private Color32 brown
+        private Color32 black
+        private Color32 white
+    endglobals
+
+    struct Color32
+
+        private integer mR
+        private integer mG
+        private integer mB
+        private integer mA
+        
+        private static method onInit takes nothing returns nothing
+            set red = Create(255, 3, 3, 255)
+            set blue = Create(0, 255, 66, 255)
+            set cyan = Create(28, 185, 230, 255)
+            set purple = Create(84, 129, 0, 255)
+            set yellow = Create(255, 1, 252, 255)
+            set orange = Create(254, 14, 138, 255)
+            set green = Create(32, 0, 192, 255)
+            set pink = Create(229, 176, 91, 255)
+            set grey = Create(150, 150, 150, 255)
+            set lightBlue = Create(126, 241, 191, 255)
+            set darkGreen = Create(16, 70, 98, 255)
+            set brown = Create(78, 4, 42, 255)
+            set black = Create(0, 0, 0, 255)
+            set white = Create(255, 255, 255, 255)
+        endmethod
+        
+        
+        static method Create takes integer r, integer g, integer b, integer a returns thistype
+            local thistype this = allocate()
+            set R = r
+            set G = g
+            set B = b
+            set A = a
+            return this
+        endmethod
+        
+        
+        static method operator Red takes nothing returns Color32
+            return red
+        endmethod
+        static method operator Blue takes nothing returns Color32
+            return blue
+        endmethod
+        static method operator Cyan takes nothing returns Color32
+            return cyan
+        endmethod
+        static method operator Purple takes nothing returns Color32
+            return purple
+        endmethod
+        static method operator Yellow takes nothing returns Color32
+            return yellow
+        endmethod
+        static method operator Orange takes nothing returns Color32
+            return orange
+        endmethod
+        static method operator Green takes nothing returns Color32
+            return green
+        endmethod
+        static method operator Pink takes nothing returns Color32
+            return pink
+        endmethod
+        static method operator Grey takes nothing returns Color32
+            return grey
+        endmethod
+        static method operator LightBlue takes nothing returns Color32
+            return lightBlue
+        endmethod
+        static method operator DarkGreen takes nothing returns Color32
+            return darkGreen
+        endmethod
+        static method operator Brown takes nothing returns Color32
+            return brown
+        endmethod
+        static method operator Black takes nothing returns Color32
+            return black
+        endmethod
+        static method operator White takes nothing returns Color32
+            return white
+        endmethod
+        
+        
+        method ToString takes nothing returns string
+            local string a = Convert(mA)
+            local string r = Convert(mR)
+            local string g = Convert(mG)
+            local string b = Convert(mB)
+            return a + r + g + b
+        endmethod
+        
+        
+        method ToText takes string message returns string
+            local string r = Convert(mR)
+            local string g = Convert(mG)
+            local string b = Convert(mB)
+            return "|cFF" + r + g + b + message + "|r"
+        endmethod
+        
+        
+        method operator R= takes integer value returns nothing
+            set mR = value
+            if mR > 255 then
+                set mR = 255
+            elseif mR < 0 then
+                set mR = 0
+            endif
+        endmethod
+        method operator G= takes integer value returns nothing
+            set mG = value
+            if mG > 255 then
+                set mG = 255
+            elseif mG < 0 then
+                set mG = 0
+            endif
+        endmethod
+        method operator B= takes integer value returns nothing
+            set mB = value
+            if mB > 255 then
+                set mB = 255
+            elseif mB < 0 then
+                set mB = 0
+            endif
+        endmethod
+        method operator A= takes integer value returns nothing
+            set mA = value
+            if mA > 255 then
+                set mA = 255
+            elseif mA < 0 then
+                set mA = 0
+            endif
+        endmethod
+        
+        
+        method operator R takes nothing returns integer
+            return mR
+        endmethod
+        method operator G takes nothing returns integer
+            return mG
+        endmethod
+        method operator B takes nothing returns integer
+            return mB
+        endmethod
+        method operator A takes nothing returns integer
+            return mA
+        endmethod
+        
+        
+        method Destroy takes nothing returns nothing
+            call deallocate()
+            set this = 0
+        endmethod
+    endstruct
+endscope

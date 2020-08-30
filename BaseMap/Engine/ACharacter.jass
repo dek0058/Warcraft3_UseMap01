@@ -1,0 +1,23 @@
+library ACharacter requires AUnit
+
+    globals
+
+    endglobals
+
+    private function Update takes nothing returns nothing
+
+    endfunction
+
+    private struct GameTick
+        
+    endstruct
+
+
+    struct ACharacter
+        private AUnit mUnit
+
+        method operator Value takes nothing returns AUnit
+            return mUnit
+        endmethod
+    endstruct
+endlibrary
