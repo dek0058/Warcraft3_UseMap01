@@ -7,7 +7,7 @@ library ACharacter requires AUnit
             return mUnit
         endmethod
 
-        method Destroy takes nothing returns nothing
+        stub method Destroy takes nothing returns nothing
             call mUnit.Remove()
             call deallocate()
             set this = 0
@@ -16,5 +16,6 @@ library ACharacter requires AUnit
 
     //! textmacro CreateCharacter takes ID
     set mUnit = AUnit.Create($ID$, p, x, y, angle)
+    call AEngine.RegisterCharacter(this)
     //! endtextmacro
 endlibrary

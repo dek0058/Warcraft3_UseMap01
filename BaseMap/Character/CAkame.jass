@@ -8,6 +8,10 @@ library CAkame
             return this
         endmethod
 
-    endstruct
 
+        method Destroy takes nothing returns nothing
+            
+            call super.Destory()
+        endmethod
+    endstruct
 endlibrary
