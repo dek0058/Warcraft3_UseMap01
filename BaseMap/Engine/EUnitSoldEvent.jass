@@ -1,15 +1,13 @@
-library EUnitSoldEvent
+library EUnitSoldEvent required IEvent
 
-    globals
-        private trigger trig
-    endglobals
 
-    struct EUnitSoldEvent extends array
-        
-        
-        
-        static method Register takes nothing returns nothing
-            
+    struct EUnitSoldEvent extends IEvent
+
+        static method Create takes APlayer p returns thistype
+            local thistype this = allocate()
+            // 생성
+            return this
         endmethod
+        
     endstruct
 endlibrary

@@ -1,4 +1,4 @@
-library CAkame
+library CAkame requires ACharacter
 
     struct CAkame extends ACharacter
 
@@ -8,10 +8,9 @@ library CAkame
             return this
         endmethod
 
-
+    
         method Destroy takes nothing returns nothing
-            
-            call super.Destory()
+            call super.Destroy()
         endmethod
     endstruct
 endlibrary

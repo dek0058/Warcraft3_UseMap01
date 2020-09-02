@@ -1,0 +1,13 @@
+library IEvent
+    
+    interface IEvent
+        integer id
+        trigger trig
+        triggercondition condition
+        triggeraction action
+
+        method OnFilter takes nothing returns boolean defaults true
+        method OnAction takes nothing returns nothing defaults nothing
+    endinterface
+
+endlibrary
