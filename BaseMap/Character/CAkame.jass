@@ -1,14 +1,21 @@
 library CAkame requires ACharacter
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     struct CAkame extends ACharacter
-
+        
         static method Create takes APlayer p, real x, real y, real angle returns thistype
-            local this = allocate()
-            //! runtextmacro CreateCharacter(Akame)
+            local thistype this = allocate()
+            //! runtextmacro CreateCharacter("Akame")
             return this
         endmethod
+<<<<<<< Updated upstream
 
     
+=======
+        
+>>>>>>> Stashed changes
         method Destroy takes nothing returns nothing
             call super.Destroy()
         endmethod
